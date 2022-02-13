@@ -1,0 +1,29 @@
+version: '3'
+services:
+  react:
+    build:
+      dockerfile: Dockerfile.dev
+      context: ../../sample-react-app
+    volumes:
+      - /app/node_modules
+      - ../../sample-react-app:/app
+    stdin_open: true
+
+  express:
+    build:
+      dockerfile: Dockerfile.dev
+      context: ../../sample-express-app
+    volumes:
+      - /app/node_modules
+      - ../../sample-express-app:/app
+
+  nginx:
+    image: nginx:1.15-alpine
+    depends_on:
+      - react 
+      - express 
+    restart: always
+    volumes: 
+      - ../../nginx/default.conf:/etc/nginx/conf.d/default.conf
+    ports:
+      - '3000:80'
